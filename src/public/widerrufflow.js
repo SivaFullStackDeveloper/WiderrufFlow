@@ -20,7 +20,7 @@
         position: options.buttonStyle?.position || "fixed",
         top: options.buttonStyle?.top || "auto",
         left: options.buttonStyle?.left || "auto",
-        bottom: options.buttonStyle?.bottom || "20px",
+        bottom: "calc(20px + env(safe-area-inset-bottom))",
         right: options.buttonStyle?.right || "20px",
         width: options.buttonStyle?.width || "90%",
         maxWidth: options.buttonStyle?.maxWidth || "320px",

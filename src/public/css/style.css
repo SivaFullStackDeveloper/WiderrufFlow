@@ -45,7 +45,7 @@ body {
     line-height: 1.6;
 }
 
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
 .section { padding: 100px 0; }
 span { color: var(--primary); }
 
@@ -927,13 +927,16 @@ transform:translateY(0);
         transform: translateY(0);
     }
 }
-
+img,video,iframe{
+max-width:100%;
+height:auto;
+}
 /* Glow background orbs */
 .glow-orb-1,
 .glow-orb-2 {
     position: fixed;
-    width: 500px;
-    height: 500px;
+   width: min(500px, 80vw);
+height: min(500px, 80vw);
     border-radius: 50%;
     filter: blur(140px);
     opacity: 0.25;
