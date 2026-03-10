@@ -1,8 +1,6 @@
-// widerrufflow.js
 (function () {
   const API_URL = "https://widerrufflow.onrender.com/api/withdraw";
 
-  // Initialize function exposed to client
   window.WiderrufFlow = {
     init: function (options) {
       if (!options || !options.orderId || !options.userEmail) {
@@ -16,61 +14,79 @@
       // Create Withdraw Button
       const button = document.createElement("button");
       button.innerText = "Widerruf / Cancel Contract";
-      button.style.position = "fixed";
-      button.style.bottom = "20px";
-      button.style.right = "20px";
-      button.style.padding = "12px 20px";
-      button.style.backgroundColor = "#ff1e1e";
-      button.style.color = "#fff";
-      button.style.border = "none";
-      button.style.borderRadius = "5px";
-      button.style.cursor = "pointer";
-      button.style.zIndex = 10000;
+      Object.assign(button.style, {
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        padding: "12px 16px",
+        backgroundColor: "#ff1e1e",
+        color: "#fff",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer",
+        zIndex: 99999,
+        width: "80vw",
+        maxWidth: "300px",
+        fontSize: "16px",
+        textAlign: "center",
+        touchAction: "manipulation",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+      });
 
       document.body.appendChild(button);
 
       // Modal Overlay
       const modal = document.createElement("div");
-      modal.style.position = "fixed";
-      modal.style.top = 0;
-      modal.style.left = 0;
-      modal.style.width = "100%";
-      modal.style.height = "100%";
-      modal.style.backgroundColor = "rgba(0,0,0,0.5)";
-      modal.style.display = "none";
-      modal.style.justifyContent = "center";
-      modal.style.alignItems = "center";
-      modal.style.zIndex = 10001;
+      Object.assign(modal.style, {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "none",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 100000,
+        pointerEvents: "auto",
+      });
 
       const modalContent = document.createElement("div");
-      modalContent.style.backgroundColor = "#fff";
-      modalContent.style.padding = "20px";
-      modalContent.style.borderRadius = "8px";
-      modalContent.style.textAlign = "center";
-      modalContent.style.maxWidth = "400px";
+      Object.assign(modalContent.style, {
+        backgroundColor: "#fff",
+        padding: "20px",
+        borderRadius: "8px",
+        textAlign: "center",
+        maxWidth: "90%",
+        width: "400px",
+      });
 
       const modalText = document.createElement("p");
       modalText.innerText = "Do you want to withdraw your order?";
 
       const confirmBtn = document.createElement("button");
       confirmBtn.innerText = "Confirm Withdrawal";
-      confirmBtn.style.margin = "10px";
-      confirmBtn.style.padding = "10px 20px";
-      confirmBtn.style.backgroundColor = "#FF4500";
-      confirmBtn.style.color = "#fff";
-      confirmBtn.style.border = "none";
-      confirmBtn.style.borderRadius = "5px";
-      confirmBtn.style.cursor = "pointer";
+      Object.assign(confirmBtn.style, {
+        margin: "10px",
+        padding: "10px 20px",
+        backgroundColor: "#FF4500",
+        color: "#fff",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer",
+      });
 
       const cancelBtn = document.createElement("button");
       cancelBtn.innerText = "Cancel";
-      cancelBtn.style.margin = "10px";
-      cancelBtn.style.padding = "10px 20px";
-      cancelBtn.style.backgroundColor = "#aaa";
-      cancelBtn.style.color = "#fff";
-      cancelBtn.style.border = "none";
-      cancelBtn.style.borderRadius = "5px";
-      cancelBtn.style.cursor = "pointer";
+      Object.assign(cancelBtn.style, {
+        margin: "10px",
+        padding: "10px 20px",
+        backgroundColor: "#aaa",
+        color: "#fff",
+        border: "none",
+        borderRadius: "5px",
+        cursor: "pointer",
+      });
 
       modalContent.appendChild(modalText);
       modalContent.appendChild(confirmBtn);
