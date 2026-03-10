@@ -98,7 +98,34 @@ p { font-size: 1.125rem; color: var(--muted); }
 .btn-login:hover { background: rgba(0,0,0,0.05); }
 .btn-signup { background: var(--dark); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .btn-signup:hover { background: #000; transform: translateY(-1px); }
+.btn-login,
+.btn-signup{
 
+padding:12px 22px;
+
+border-radius:8px;
+
+font-weight:600;
+
+text-decoration:none;
+
+display:inline-block;
+
+}
+
+.btn-login{
+
+border:1px solid #2563eb;
+color:#2563eb;
+
+}
+
+.btn-signup{
+
+background:#2563eb;
+color:white;
+
+}
 /* =========================================
    4. Hero Section
    ========================================= */
