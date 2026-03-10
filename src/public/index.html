@@ -35,7 +35,7 @@ Widerruf<span>Flow</span>
 <a href="#features">Funktionen</a>
 <a href="#demo">Demo</a>
 <a href="#pricing">Preise</a>
-<a href="#warum">Warum?</a>
+<a href="./warum.html">Warum?</a>
 <a href="#Blog">Blog</a>
 </div>
 
@@ -127,7 +127,7 @@ Nahtlose Integration
 </span>
 
 <h2>
-Gebaut für moderne deutsche SaaS-Unternehmen
+Gebaut für moderne deutsche Unternehmen
 </h2>
 
 </div>
@@ -340,7 +340,7 @@ Simulation starten
 
 <div class="section-header">
 <h2>Einfache Preisgestaltung</h2>
-<p>Transparent, skalierbar und perfekt für moderne SaaS-Unternehmen</p>
+<p>Transparent, skalierbar und perfekt für moderne Unternehmen</p>
 </div>
 
 <div class="pricing-grid">
@@ -551,7 +551,7 @@ Demo ansehen
 <div class="container">
 
 <h2>
-So automatisieren moderne SaaS-Unternehmen ihr Widerrufsrecht
+So automatisieren moderne Unternehmen ihr Widerrufsrecht
 </h2>
 
 <p>
@@ -597,7 +597,7 @@ Widerruf<span>Flow</span>
 <p class="footer-tagline">
 
 Automatisierte BGB Compliance
-für moderne deutsche SaaS-Unternehmen.
+für moderne deutsche Unternehmen.
 
 </p>
 
@@ -613,7 +613,7 @@ für moderne deutsche SaaS-Unternehmen.
 <li><a href="#features">Funktionen</a></li>
 <li><a href="#demo">Demo</a></li>
 <li><a href="#pricing">Preise</a></li>
-<li><a href="#warum">Warum?</a></li>
+<li><a href="./warum.html">Warum?</a></li>
 <li><a href="#Blog">Blog</a></li>
 </ul>
 
@@ -677,6 +677,41 @@ Built in Berlin ⚖️
 
 </footer>
 
+<script>
+console.log = function(){};
+console.warn = function(){};
+console.error = function(){};
+console.debug = function(){};
+setInterval(function() {
+var widthThreshold = window.outerWidth - window.innerWidth > 160;
+var heightThreshold = window.outerHeight - window.innerHeight > 160;
 
+if (widthThreshold || heightThreshold) {
+document.body.innerHTML = "Developer tools detected";
+}
+}, 1000);
+document.onkeydown = function(e) {
+
+if (e.keyCode == 123) { // F12
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.keyCode == 73) { // Ctrl+Shift+I
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.keyCode == 74) { // Ctrl+Shift+J
+return false;
+}
+
+if (e.ctrlKey && e.keyCode == 85) { // Ctrl+U
+return false;
+}
+
+};
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+});
+</script>
 </body>
 </html>

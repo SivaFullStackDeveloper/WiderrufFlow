@@ -96,6 +96,41 @@ Noch kein Konto?
 </div>
 
 </div>
+<script>
+console.log = function(){};
+console.warn = function(){};
+console.error = function(){};
+console.debug = function(){};
+setInterval(function() {
+var widthThreshold = window.outerWidth - window.innerWidth > 160;
+var heightThreshold = window.outerHeight - window.innerHeight > 160;
 
+if (widthThreshold || heightThreshold) {
+document.body.innerHTML = "Developer tools detected";
+}
+}, 1000);
+document.onkeydown = function(e) {
+
+if (e.keyCode == 123) { // F12
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.keyCode == 73) { // Ctrl+Shift+I
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.keyCode == 74) { // Ctrl+Shift+J
+return false;
+}
+
+if (e.ctrlKey && e.keyCode == 85) { // Ctrl+U
+return false;
+}
+
+};
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+});
+</script>
 </body>
 </html>

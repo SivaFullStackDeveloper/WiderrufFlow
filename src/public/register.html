@@ -47,6 +47,24 @@ Bearbeiten Sie Widerrufsanforderungen Ihrer Kunden automatisch,
 bleiben Sie konform mit dem deutschen Verbraucherrecht
 und verwalten Sie alles über ein zentrales Dashboard.
 </p>
+<p>
+
+
+</p>
+<p style="color: rgb(65, 65, 250);">Durch die Registrierung mit WiderrufFlow vermeiden Sie:</p>
+<p>
+
+
+</p>
+<p>⚠️ Bußgelder bis zu 50.000€ für fehlerhafte Widerrufsprozesse</p>
+
+<p>⚖️ Abmahnungen durch Wettbewerber oder Anwälte</p>
+
+<p>📉 Vertrauensverlust und Umsatzverlust bei Kunden</p>
+
+<p>⛔ Rechtswidrige Speicherung von Widerrufsanforderungen in Excel, Word oder unsicheren lokalen Dateien – diese werden vom Gesetzgeber nicht anerkannt</p>
+
+<p>🔒 Datenschutzverstöße und unsichere Speicherung sensibler Daten</p>
 
 </div>
 
@@ -111,7 +129,42 @@ Haben Sie bereits ein Konto?
 </div>
 
 </div>
+<script>
+console.log = function(){};
+console.warn = function(){};
+console.error = function(){};
+console.debug = function(){};
+setInterval(function() {
+var widthThreshold = window.outerWidth - window.innerWidth > 160;
+var heightThreshold = window.outerHeight - window.innerHeight > 160;
 
+if (widthThreshold || heightThreshold) {
+document.body.innerHTML = "Developer tools detected";
+}
+}, 1000);
+document.onkeydown = function(e) {
+
+if (e.keyCode == 123) { // F12
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.keyCode == 73) { // Ctrl+Shift+I
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.keyCode == 74) { // Ctrl+Shift+J
+return false;
+}
+
+if (e.ctrlKey && e.keyCode == 85) { // Ctrl+U
+return false;
+}
+
+};
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+});
+</script>
 </body>
 
 </html>
