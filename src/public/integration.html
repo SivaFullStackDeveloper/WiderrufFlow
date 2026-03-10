@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WiderrufFlow Integration | BGB & DSGVO</title>
+<style>
+  /* Base Styles */
+  body { display: flex; min-height: 100vh; margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f8f9fa; }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    background: #1E1E2F;
+    color: #fff;
+    padding: 20px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top:0;
+    height:100vh;
+    box-sizing: border-box;
+  }
+  .sidebar h3 { font-size:14px; text-transform: uppercase; letter-spacing: 1px; color: #6c757d; margin-bottom: 20px; }
+  
+  .platform-btn {
+    display:flex; align-items:center; gap:12px;
+    padding: 12px 15px; border:none; border-radius:8px;
+    background:#2c2c42; color:#fff; cursor:pointer; text-align:left;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+  .platform-btn:hover { background: #3d3d5c; }
+  .platform-btn.active { background:#1E90FF; box-shadow: 0 4px 10px rgba(30, 144, 255, 0.3); }
+  
+  /* Icons fallback (Dot if image fails) */
+  .platform-btn::before {
+    content: ''; display: inline-block; width: 8px; height: 8px; 
+    background: #1E90FF; border-radius: 50%;
+  }
+  .platform-btn.active::before { background: #fff; }
+
+  /* Content Area */
+  .content { flex:1; padding:40px; overflow-y:auto; }
+  .card { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
+  
+  h2 { margin-top:0; color: #1E1E2F; font-size: 24px; }
+  p { color: #666; margin-bottom: 20px; }
+
+  /* Code Block */
+  .code-container { position: relative; }
+  pre { 
+    background:#272822; color:#f8f8f2; padding:20px; border-radius:8px; 
+    overflow-x:auto; font-size: 14px; line-height: 1.5;
+    border-left: 4px solid #1E90FF;
+  }
+  
+  #copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    padding: 6px 15px; background: rgba(255,255,255,0.1);
+    color:#fff; border: 1px solid rgba(255,255,255,0.2);
+    border-radius:4px; cursor:pointer; transition: 0.2s;
+  }
+  #copy-btn:hover { background: #1E90FF; border-color: #1E90FF; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h3>Plattformen</h3>
+  <button class="platform-btn active" data-platform="html">HTML / Vanilla JS</button>
+  <button class="platform-btn" data-platform="react">React</button>
+  <button class="platform-btn" data-platform="vue">Vue.js</button>
+  <button class="platform-btn" data-platform="shopify">Shopify</button>
+  <button class="platform-btn" data-platform="wordpress">WordPress</button>
+  <button class="platform-btn" data-platform="flutter">Flutter</button>
+</div>
+
+<div class="content">
+  <div class="card">
+    <h2 id="platform-title">HTML / Vanilla JS Integration</h2>
+    <p>Kopieren Sie diesen Code in Ihren Header oder Body, um WiderrufFlow zu aktivieren.</p>
+    
+    <div class="code-container">
+      <button id="copy-btn">Copy</button>
+      <pre id="platform-code"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+const snippets = {
+  html: `<script src="https://widerrufflow.onrender.com/widerrufflow.js"><\/script>
+<script>
+  WiderrufFlow.init({
+    orderId: "12345",
+    userEmail: "kunde@example.com"
+  });
+<\/script>`,
+
+  react: `import { useEffect } from 'react';
+
+function WiderrufButton() { 
+  useEffect(() => { 
+    const script = document.createElement('script'); 
+    script.src = "https://widerrufflow.onrender.com/widerrufflow.js"; 
+    script.async = true;
+    script.onload = () => { 
+      if (window.WiderrufFlow) {
+        window.WiderrufFlow.init({ orderId: "12345", userEmail: "kunde@example.com" }); 
+      }
+    }; 
+    document.body.appendChild(script); 
+  }, []); 
+
+  return <div id="widerrufflow-container"></div>; 
+} 
+
+export default WiderrufButton;`,
+
+  vue: `<template>
+  <div id="widerrufflow-container"></div>
+</template>
+
+<script>
+export default {
+  mounted() {
+    const script = document.createElement('script');
+    script.src = "https://widerrufflow.onrender.com/widerrufflow.js";
+    script.onload = () => {
+      window.WiderrufFlow.init({ orderId: "12345", userEmail: "kunde@example.com" });
+    };
+    document.body.appendChild(script);
+  }
+}
+<\/script>`,
+
+  shopify: `<script src="https://widerrufflow.onrender.com/widerrufflow.js"><\/script>
+<script>
+  WiderrufFlow.init({ 
+    orderId: "{{ order.id }}", 
+    userEmail: "{{ customer.email }}" 
+  });
+<\/script>`,
+
+  wordpress: `<script src="https://widerrufflow.onrender.com/widerrufflow.js"><\/script>
+<script>
+  WiderrufFlow.init({ 
+    orderId: "<?php echo $order->ID; ?>", 
+    userEmail: "<?php echo $user->user_email; ?>" 
+  });
+<\/script>`,
+
+  flutter: `// Updated for webview_flutter 4.0+
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+class WiderrufPage extends StatefulWidget {
+  @override
+  State<WiderrufPage> createState() => _WiderrufPageState();
+}
+
+class _WiderrufPageState extends State<WiderrufPage> {
+  late final WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadHtmlString('''
+        <!DOCTYPE html>
+        <html>
+          <head><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+          <body>
+            <script src="https://widerrufflow.onrender.com/widerrufflow.js"><\/script>
+            <script>
+              window.onload = function() {
+                WiderrufFlow.init({ orderId: "12345", userEmail: "kunde@example.com" });
+              };
+            <\/script>
+          </body>
+        </html>
+      ''');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: WebViewWidget(controller: controller),
+    );
+  }
+}`
+};
+
+const buttons = document.querySelectorAll('.platform-btn');
+const codeEl = document.getElementById('platform-code');
+const titleEl = document.getElementById('platform-title');
+const copyBtn = document.getElementById('copy-btn');
+
+function showSnippet(platform) {
+  const btn = document.querySelector(`[data-platform="${platform}"]`);
+  titleEl.textContent = btn.textContent + " Integration";
+  codeEl.textContent = snippets[platform];
+}
+
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showSnippet(btn.getAttribute('data-platform'));
+  });
+});
+
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(codeEl.textContent).then(() => {
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => copyBtn.textContent = originalText, 1500);
+  });
+});
+
+// Start with HTML
+showSnippet('html');
+</script>
+
+</body>
+</html>

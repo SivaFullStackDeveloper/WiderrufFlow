@@ -20,7 +20,7 @@
       button.style.bottom = "20px";
       button.style.right = "20px";
       button.style.padding = "12px 20px";
-      button.style.backgroundColor = "#1E90FF";
+      button.style.backgroundColor = "#ff1e1e";
       button.style.color = "#fff";
       button.style.border = "none";
       button.style.borderRadius = "5px";

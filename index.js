@@ -17,6 +17,7 @@ mongoose.connect(process.env.MONGO_URI,)
 .catch(err => console.error("MongoDB Fehler:", err));
 
 // Middleware
+app.use(express.static(path.join(__dirname, "src", "public")));
 
 app.use(cors());
 app.use(cookieParser());
@@ -25,7 +26,7 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files
-app.use(express.static(path.join(__dirname, 'src', 'public')));
+
 app.use(express.static("public", { index: false }));
 
 // Security: block access to sensitive files
@@ -71,6 +72,14 @@ app.post('/v1/revoke', (req, res) => {
 // Example API endpoint
 app.get('/v1/revoke', (req, res) => {
     res.json({ success: true, message: "Request received" });
+});
+
+
+
+// Your API endpoint
+app.post("/api/withdraw", express.json(), (req, res) => {
+  console.log(req.body); // orderId & userEmail
+  res.json({ success: true });
 });
 // Start server
 const PORT = process.env.PORT || 3000;
