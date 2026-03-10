@@ -1,6 +1,11 @@
 /* =========================================
    1. Variables & Reset
    ========================================= */
+html,body{
+width:100%;
+max-width:100%;
+overflow-x:hidden;
+}
 :root {
     --primary: #2563eb;       /* Modern Blue */
     --primary-hover: #1d4ed8;
@@ -25,9 +30,10 @@
     z-index: -1;
 }
 .container{
+width:100%;
 max-width:1200px;
-margin:auto;
-padding:0 24px;
+margin:0 auto;
+padding:0 20px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; font-size: 16px; }
@@ -1014,4 +1020,33 @@ text-align:center;
 .quote{
 font-size:22px;
 margin-bottom:20px;
+}
+
+
+@media (max-width: 768px){
+
+.navbar-inner{
+flex-direction:row;
+flex-wrap:wrap;
+justify-content:center;
+height:auto;
+padding:10px 10px;
+gap:10px;
+}
+
+.links{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+width:100%;
+}
+
+.nav-auth{
+width:100%;
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
 }
