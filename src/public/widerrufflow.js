@@ -13,24 +13,28 @@
 
       // Create Withdraw Button
       const button = document.createElement("button");
-      button.innerText = "Widerruf / Cancel Contract";
+      button.innerText = options.buttonText || "Widerruf / Cancel Contract";
+
+      // Default mobile-friendly styles
       Object.assign(button.style, {
-        position: "fixed",
-        bottom: "20px",
-        right: "20px",
-        padding: "12px 16px",
-        backgroundColor: "#ff1e1e",
-        color: "#fff",
+        position: options.buttonStyle?.position || "fixed",
+        top: options.buttonStyle?.top || "auto",
+        left: options.buttonStyle?.left || "auto",
+        bottom: options.buttonStyle?.bottom || "20px",
+        right: options.buttonStyle?.right || "20px",
+        width: options.buttonStyle?.width || "90%",
+        maxWidth: options.buttonStyle?.maxWidth || "320px",
+        padding: "14px 20px",
+        backgroundColor: options.buttonStyle?.backgroundColor || "#ff1e1e",
+        color: options.buttonStyle?.color || "#fff",
         border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-        zIndex: 99999,
-        width: "80vw",
-        maxWidth: "300px",
+        borderRadius: "8px",
         fontSize: "16px",
         textAlign: "center",
-        touchAction: "manipulation",
+        cursor: "pointer",
+        zIndex: 99999,
         boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+        touchAction: "manipulation",
       });
 
       document.body.appendChild(button);
@@ -94,12 +98,12 @@
       modal.appendChild(modalContent);
       document.body.appendChild(modal);
 
-      // Button click opens modal
+      // Open modal
       button.addEventListener("click", () => {
         modal.style.display = "flex";
       });
 
-      // Cancel button closes modal
+      // Close modal
       cancelBtn.addEventListener("click", () => {
         modal.style.display = "none";
       });
@@ -117,11 +121,13 @@
           });
 
           if (response.ok) {
-            modalText.innerText = "Withdrawal confirmed! You will receive an email shortly.";
+            modalText.innerText =
+              "Withdrawal confirmed! You will receive an email shortly.";
             confirmBtn.style.display = "none";
             cancelBtn.innerText = "Close";
           } else {
-            modalText.innerText = "Failed to process withdrawal. Try again later.";
+            modalText.innerText =
+              "Failed to process withdrawal. Try again later.";
             confirmBtn.disabled = false;
             confirmBtn.innerText = "Confirm Withdrawal";
           }
