@@ -9,6 +9,8 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
+const checkerRouter = require("./src/routers/checker");
+
 require('dotenv').config();
 
 // MongoDB connection
@@ -60,6 +62,7 @@ app.use("/login", loginRouter);
 app.use("/register", registerRouter);
 app.use("/demo", demoRouter);
 
+app.use("/api", checkerRouter);
 // Default route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'public', 'index.html'));
