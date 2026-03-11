@@ -151,7 +151,7 @@
     init: function (options) {
       // 1. Create the Main Trigger Button
       const button = document.createElement("button");
-      button.innerText = options.buttonText || "Widerruf / Cancel Contract";
+      button.innerText = options.buttonText || "Widerruf";
 
       Object.assign(button.style, {
         position: "fixed",
