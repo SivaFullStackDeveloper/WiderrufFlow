@@ -146,11 +146,9 @@
       link.addEventListener("click", e => { e.preventDefault(); openModal(); });
       container.appendChild(link);
     }
-
-    addLink(document.querySelector("header"));
-    addLink(document.querySelector("footer"));
-    addLink(document.querySelector("nav"));
-
+createModalLink(document.querySelector("header"), "Widerruf", openModal);
+createModalLink(document.querySelector("footer"), "Widerruf", openModal);
+createModalLink(document.querySelector("nav"), "Widerruf", openModal);
     // --- Floating button click ---
     floatButton.addEventListener("click", e => { e.preventDefault(); openModal(); });
   }
@@ -163,3 +161,25 @@
 
   window.WiderrufFlow = { init: initWiderruf };
 })();
+
+
+
+function createModalLink(container, text, openModal) {
+  if (!container) return;
+  const ref = document.createElement("a");
+  ref.textContent = text;
+
+  // Copy styling from the first link or button in the container
+  const sample = container.querySelector("a") || container.querySelector("button");
+  if (sample) {
+    ref.className = sample.className;        // copy existing classes
+    ref.style.cssText = sample.style.cssText; // optional: copy inline styles
+  }
+
+  ref.addEventListener("click", e => {
+    e.preventDefault();
+    openModal();
+  });
+
+  container.appendChild(ref);
+}
