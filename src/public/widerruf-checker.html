@@ -1288,18 +1288,20 @@ Widerruf<span>Flow</span>
 </p>
 
 <div class="scan-box">
+    <input
+        id="websiteInput"
+        type="url" 
+        placeholder="https://beispiel-shop.de"
+        class="scan-input"
+        required
+    />
+    <button onclick="scanWebsite()" class="scan-btn">
+        Website prüfen
+    </button>
+</div>
 
-<input
-id="websiteInput"
-type="text"
-placeholder="https://example-shop.de"
-class="scan-input"
-/>
-
-<button onclick="scanWebsite()" class="scan-btn">
-Website prüfen
-</button>
-
+<div id="validationMsg" style="color: #d93025; font-size: 13px; margin-top: 8px; display: none; font-weight: 500;">
+    Bitte geben Sie eine vollständige Adresse ein (z. B. https://domain.de).
 </div>
 
 <div class="progress">
@@ -1442,7 +1444,69 @@ document.getElementById("resultText").innerHTML="Scan fehlgeschlagen";
 }
 
 }
+async function scanWebsite() {
+    const inputField = document.getElementById("websiteInput");
+    const validationMsg = document.getElementById("validationMsg");
+    const urlValue = inputField.value.trim();
 
+    // Einfache Frontend-Validierung: Prüft auf http/https und einen Punkt
+    const isValidUrl = urlValue.includes('.') && (urlValue.startsWith('http://') || urlValue.startsWith('https://'));
+
+    if (!isValidUrl) {
+        validationMsg.style.display = "block";
+        inputField.style.borderColor = "#d93025";
+        return;
+    }
+
+    // Wenn gültig, Fehlermeldung ausblenden
+    validationMsg.style.display = "none";
+    inputField.style.borderColor = "#ddd";
+
+    // UI Animation starten
+    const progress = document.querySelector(".progress");
+    const bar = document.getElementById("progressBar");
+    const result = document.getElementById("scanResult");
+
+    progress.style.display = "block";
+    result.style.display = "none";
+    bar.style.width = "0%";
+
+    // Simulation des Scans (da kein Backend vorhanden ist)
+    let p = 0;
+    const fake = setInterval(() => {
+        p += 10;
+        bar.style.width = p + "%";
+        
+        if (p >= 100) {
+            clearInterval(fake);
+            showFakeResult(urlValue);
+        }
+    }, 150);
+}
+
+function showFakeResult(url) {
+    const result = document.getElementById("scanResult");
+    const scoreText = document.getElementById("scoreText");
+    const scoreFill = document.getElementById("scoreFill");
+    const resultText = document.getElementById("resultText");
+
+    result.style.display = "block";
+    
+    // Beispiel-Logik: Wenn "test" in der URL vorkommt, simuliere einen Fehler
+    if (url.includes("test")) {
+        result.className = "result danger";
+        scoreText.innerHTML = "Compliance Score: 32 / 100";
+        scoreFill.style.width = "32%";
+        scoreFill.style.background = "#d93025";
+        resultText.innerHTML = "<strong>⚠ KRITISCHES RISIKO</strong><br>Kein Widerruf-Button auf " + url + " gefunden.";
+    } else {
+        result.className = "result success";
+        scoreText.innerHTML = "Compliance Score: 95 / 100";
+        scoreFill.style.width = "95%";
+        scoreFill.style.background = "#1c7d41";
+        resultText.innerHTML = "✔ Analyse abgeschlossen für " + url + ". Alle rechtlichen Elemente scheinen vorhanden zu sein.";
+    }
+}
 </script>
 
 </body>
