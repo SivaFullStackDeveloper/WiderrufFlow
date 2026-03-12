@@ -2,35 +2,55 @@
   const API_URL = "https://widerrufflow.onrender.com/api/withdraw";
   const LEGAL_HASH = "#widerruf";
 
-  function detectTheme(){
+function detectTheme() {
+  const root = document.documentElement;
+  const rootStyles = getComputedStyle(root);
 
- // Find a reference button on the page
-const referenceBtn = document.querySelector("button, .btn, [class*='button']");
+  // 1. THE "CSS VARIABLE" LIST (Expanded)
+  const colorVars = [
+    '--color-primary', '--color-btn-bg', '--brand-primary', 
+    '--accent-color', '--theme-primary', '--primary', '--main-color'
+  ];
 
-if (referenceBtn) {
-  // Copy styles dynamically
-  Object.assign(fab.style, {
-    backgroundColor: window.getComputedStyle(referenceBtn).backgroundColor,
-    color: window.getComputedStyle(referenceBtn).color,
-    fontFamily: window.getComputedStyle(referenceBtn).fontFamily,
-    fontSize: window.getComputedStyle(referenceBtn).fontSize,
-    fontWeight: window.getComputedStyle(referenceBtn).fontWeight,
-    borderRadius: window.getComputedStyle(referenceBtn).borderRadius,
-  });
-}
-  const link = document.querySelector("a");
+  let primary = "";
 
-  const primary = referenceBtn
-    ? getComputedStyle(referenceBtn).backgroundColor
-    : "#2563eb";
+  // Try Variables first
+  for (let v of colorVars) {
+    let val = rootStyles.getPropertyValue(v).trim();
+    if (val && val.length > 3) { primary = val; break; }
+  }
 
-  const text = link
-    ? getComputedStyle(link).color
-    : "#333";
+  // 2. THE "ELEMENT SAMPLING" FALLBACK (If variables fail)
+  if (!primary) {
+    // Look for the "Add to Cart" or "Submit" button which usually has the brand color
+    const bestMatch = document.querySelector(
+      'button[type="submit"], .btn-primary, .button--primary, [class*="primary"]'
+    );
+    if (bestMatch) {
+      primary = window.getComputedStyle(bestMatch).backgroundColor;
+    }
+  }
+
+  // Final Default if everything fails
+  if (!primary || primary === "transparent" || primary === "rgba(0, 0, 0, 0)") {
+    primary = "#2563eb"; 
+  }
+
+  // 3. CONTRAST CHECKER (Black or White text?)
+  // This prevents white text on a light yellow button
+  const tempDiv = document.createElement("div");
+  tempDiv.style.color = primary;
+  document.body.appendChild(tempDiv);
+  const rgb = window.getComputedStyle(tempDiv).color.match(/\d+/g);
+  document.body.removeChild(tempDiv);
+  
+  const brightness = rgb ? (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 : 0;
+  const contrastText = brightness > 180 ? "#333333" : "#ffffff";
 
   return {
-    primary,
-    text
+    primary: primary,
+    contrastText: contrastText,
+    font: getComputedStyle(document.body).fontFamily || "sans-serif"
   };
 }
 
@@ -99,7 +119,7 @@ document.body.style.fontFamily = font;
         <input type="email" id="wf-email" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;">
       </div>
 
-      <button id="wf-submit-audit" style="width:100%; padding:16px; background:${THEME.primary}; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:18px;">
+      <button id="wf-submit-audit" style="width:100%; padding:16px; background:${THEME.primary}; color:${THEME.contrastText}; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:18px;">
         Widerruf bestätigen
       </button>
     </div>
