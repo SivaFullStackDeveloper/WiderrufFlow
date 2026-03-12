@@ -4,11 +4,24 @@
 
   function detectTheme(){
 
-  const btn = document.querySelector("button, .btn, [class*='button']");
+ // Find a reference button on the page
+const referenceBtn = document.querySelector("button, .btn, [class*='button']");
+
+if (referenceBtn) {
+  // Copy styles dynamically
+  Object.assign(fab.style, {
+    backgroundColor: window.getComputedStyle(referenceBtn).backgroundColor,
+    color: window.getComputedStyle(referenceBtn).color,
+    fontFamily: window.getComputedStyle(referenceBtn).fontFamily,
+    fontSize: window.getComputedStyle(referenceBtn).fontSize,
+    fontWeight: window.getComputedStyle(referenceBtn).fontWeight,
+    borderRadius: window.getComputedStyle(referenceBtn).borderRadius,
+  });
+}
   const link = document.querySelector("a");
 
-  const primary = btn
-    ? getComputedStyle(btn).backgroundColor
+  const primary = referenceBtn
+    ? getComputedStyle(referenceBtn).backgroundColor
     : "#2563eb";
 
   const text = link
