@@ -52,7 +52,7 @@ router.post("/check-widerruf", async (req, res) => {
     if (entryCheck.found) {
       auditReport.hasEntryButton = true;
       auditReport.score += 33;
-      auditReport.findings.push("✅ Widerruf-Link/Button auf der Seite gefunden.");
+      auditReport.findings.push("✅ Widerruf-Link oder Button gefunden");
 
       // Step 2 & 3: Navigate to the target page to verify content and button
       try {
@@ -83,7 +83,7 @@ router.post("/check-widerruf", async (req, res) => {
         if (deepAnalysis.textMatch) {
           auditReport.hasLegalText = true;
           auditReport.score += 33;
-          auditReport.findings.push("✅ Widerrufsbelehrung auf der Zielseite erkannt.");
+          auditReport.findings.push("✅ Widerrufsbelehrung erkannt");
         } else {
           auditReport.findings.push("❌ Widerrufsbelehrung unvollständig oder nicht gefunden.");
         }
@@ -91,7 +91,7 @@ router.post("/check-widerruf", async (req, res) => {
         if (deepAnalysis.buttonMatch) {
           auditReport.hasConfirmButton = true;
           auditReport.score += 34; // Total 100
-          auditReport.findings.push("✅ Gesetzlicher 2-Stufen-Widerruf (§ 356a BGB) erkannt.");
+          auditReport.findings.push("✅ Hinweise zum Widerrufsprozess erkannt");
         } else {
           auditReport.findings.push("❌ Mandatory 'Widerruf bestätigen' button missing in Footer or Step 2.");
         }

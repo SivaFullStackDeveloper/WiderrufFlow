@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>WiderrufFlow Compliance Scanner</title>
+<title>WiderrufFlow Audit</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -1259,7 +1259,7 @@ Widerruf<span>Flow</span>
 </div>
 </a>
 <div class="links">
-<a href="#features">Funktionen</a>
+
 <a href="#demo">Demo</a>
 <a href="#pricing">Preise</a>
 <a href="./warum.html">Warum?</a>
@@ -1279,7 +1279,7 @@ Widerruf<span>Flow</span>
 
 <div class="card">
 
-<h1>Widerruf-Compliance Check starten</h1>
+<h1>WiderrufFlow Audit starten</h1>
 
 <p class="subtitle">
 Überprüfen Sie, ob Ihre Website einen gesetzlich erforderlichen
@@ -1322,9 +1322,7 @@ Website prüfen
 </div>
 
 <div class="badges">
-<div class="badge">§356 BGB Analyse</div>
-<div class="badge">EU Verbraucherschutz</div>
-<div class="badge">DSGVO Prüfung</div>
+<div class="badge">Automatic analysis </div>
 </div>
 
 </div>
@@ -1388,7 +1386,7 @@ result.className="result danger";
 }
 
 document.getElementById("scoreText").innerHTML=
-`Compliance Score: ${score} / 100`;
+`Audit Score: ${score} / 100`;
 
 const fill=document.getElementById("scoreFill");
 
@@ -1408,7 +1406,7 @@ Ihre Website erfüllt grundlegende Anforderungen des deutschen Widerrufsrechts.
 
 text.innerHTML=`
 
-<strong>⚠ KRITISCHES COMPLIANCE RISIKO</strong><br><br>
+<strong>⚠ KRITISCHES Audit RISIKO</strong><br><br>
 
 Unsere Analyse konnte keinen Widerruf-Button erkennen.
 
@@ -1500,7 +1498,7 @@ async function scanWebsite() {
 
             // 1. Update Score & Bar Color
             const score = data.score || 0;
-            scoreText.innerHTML = `Compliance Score: ${score} / 100`;
+            scoreText.innerHTML = `Audit Score: ${score} / 100`;
             fill.style.width = score + "%";
 
             if (score >= 90) {
@@ -1529,13 +1527,28 @@ async function scanWebsite() {
             // 3. Final Result Layout
             if (score >= 90) {
                 text.innerHTML = `
-                    <strong>PERFEKTE COMPLIANCE</strong><br>
+                    <strong>Automatische Widerrufsprüfung</strong><br>
                     ${findingsHtml}
-                    <p style="margin-top:15px;">Ihre Website erfüllt die gesetzlichen Anforderungen des § 356a BGB.</p>
-                `;
+
+<br><br>
+<b>Rechtlicher Hinweis</b>
+<div style="margin-top:20px;padding:16px;border:1px solid #e2e8f0;background:#f1f5f9;border-radius:8px;color:#64748b;font-size:13px;line-height:1.6;">
+
+Die angezeigten Ergebnisse basieren auf einer automatisierten technischen Analyse
+der öffentlich zugänglichen Inhalte dieser Website.
+
+Diese Analyse dient ausschließlich zu Informationszwecken und stellt
+keine Rechtsberatung dar.
+
+Die Prüfung kann nicht alle gesetzlichen Anforderungen vollständig
+bewerten oder ersetzen. Für eine verbindliche rechtliche Beurteilung
+empfehlen wir die Konsultation eines qualifizierten Rechtsanwalts
+oder einer entsprechend zugelassenen Rechtsberatung.
+
+</div>`;
             } else {
                 text.innerHTML = `
-                    <strong>⚠ COMPLIANCE RISIKO ERKANNT</strong><br>
+                    <strong>⚠ Audit RISIKO ERKANNT</strong><br>
                     ${findingsHtml}
                     <p style="margin: 15px 0;">Fehlende Elemente können zu Abmahnungen und Bußgeldern führen.</p>
                     Unsere Analyse konnte keinen Widerruf-Button erkennen.
@@ -1548,7 +1561,24 @@ Dies kann nach deutschem Verbraucherrecht zu:
 
 führen.
     </p>                
-                    <a href="index.html#demo" class="cta">Lösung implementieren</a>
+      <a href="index.html#demo" class="cta">Lösung implementieren</a>
+      
+<br><br>
+<b>Rechtlicher Hinweis</b>
+<div style="margin-top:20px;padding:16px;border:1px solid #e2e8f0;background:#f1f5f9;border-radius:8px;color:#64748b;font-size:13px;line-height:1.6;">
+
+Die angezeigten Ergebnisse basieren auf einer automatisierten technischen Analyse
+der öffentlich zugänglichen Inhalte dieser Website.
+
+Diese Analyse dient ausschließlich zu Informationszwecken und stellt
+keine Rechtsberatung dar.
+
+Die Prüfung kann nicht alle gesetzlichen Anforderungen vollständig
+bewerten oder ersetzen. Für eine verbindliche rechtliche Beurteilung
+empfehlen wir die Konsultation eines qualifizierten Rechtsanwalts
+oder einer entsprechend zugelassenen Rechtsberatung.
+
+</div>
                  `;
             }
 
