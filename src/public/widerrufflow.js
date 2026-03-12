@@ -430,20 +430,33 @@
     floatBtn.onclick = (e) => { e.preventDefault(); openModal(); };
 
     // --- 6. AUTO-INJECTION ---
+    // --- 6. AUTO-INJECTION (Positioning & Navigation Fix) ---
     function injectLinks() {
       const linkClass = "wf-link-injected";
       
+      // 1. Footer Injection - Moving to the TOP of the footer
       const footer = document.querySelector("footer");
       if (footer && !footer.querySelector(`.${linkClass}`)) {
           const legalLink = document.createElement("a");
           legalLink.href = LEGAL_PATH;
           legalLink.className = linkClass;
           legalLink.textContent = "Widerrufsbelehrung";
-          legalLink.style.cssText = "margin-left:15px; cursor:pointer; text-decoration:underline; font-size:12px; color:inherit; opacity:0.8;";
-          // For scanners, we keep the href active.
-          footer.appendChild(legalLink);
+          
+          // Style to make it look like a header/top-level link
+          legalLink.style.cssText = "display:block; margin-bottom:10px; cursor:pointer; text-decoration:underline; font-size:14px; color:inherit; font-weight:bold;";
+          
+          // FIX: Proper virtual routing on click
+          legalLink.onclick = (e) => { 
+            e.preventDefault(); 
+            window.history.pushState({}, "", LEGAL_PATH); 
+            handleRouting(); // Manually trigger the view update
+          };
+
+          // Inserts at the very beginning of the footer (on top)
+          footer.insertBefore(legalLink, footer.firstChild);
       }
 
+      // 2. Nav/Header Injection
       ["nav", "header"].forEach(tag => {
         const container = document.querySelector(tag);
         if (container && !container.querySelector(`.${linkClass}`)) {
@@ -452,7 +465,10 @@
           navLink.className = linkClass;
           navLink.textContent = "Widerruf";
           navLink.style.cssText = "margin-left:15px; cursor:pointer; text-decoration:underline; font-size:14px; color:inherit;";
-          navLink.onclick = (e) => { e.preventDefault(); openModal(); };
+          navLink.onclick = (e) => { 
+            e.preventDefault(); 
+            openModal(); 
+          };
           container.appendChild(navLink);
         }
       });
