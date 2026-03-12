@@ -413,6 +413,28 @@
       return "#FF4500";
     }
 
+  // --- 4. THEME DETECTION (Sibling Copying) ---
+    function detectClientStyle() {
+      // Find one of the existing links to use as a model
+      const sibling = document.querySelector('footer a[href*="impressum"], footer a[href*="datenschutz"], footer a[href*="agb"]');
+      
+      if (sibling) {
+        const style = window.getComputedStyle(sibling);
+        return {
+          className: sibling.className, // Copy the CSS classes (e.g., "footer-link")
+          color: style.color,
+          font: style.fontFamily,
+          fontSize: style.fontSize,
+          display: style.display,
+          // Extract the exact spacing from the neighbor
+          marginLeft: style.marginLeft !== '0px' ? style.marginLeft : "15px",
+          paddingLeft: style.paddingLeft !== '0px' ? style.paddingLeft : "0px"
+        };
+      }
+      return null;
+    }
+
+  
     // --- 5. FLOATING BUTTON ---
     const floatBtn = document.createElement("a");
     floatBtn.id = "widerruf-widget";
@@ -430,50 +452,71 @@
     floatBtn.onclick = (e) => { e.preventDefault(); openModal(); };
 
     // --- 6. AUTO-INJECTION ---
-    // --- 6. AUTO-INJECTION (Positioning & Navigation Fix) ---
+// --- 6. AUTO-INJECTION (Design-Adaptive for Footer, Nav, & Header) ---
     function injectLinks() {
       const linkClass = "wf-link-injected";
-      
-      // 1. Footer Injection - Moving to the TOP of the footer
-      const footer = document.querySelector("footer");
-      if (footer && !footer.querySelector(`.${linkClass}`)) {
-          const legalLink = document.createElement("a");
-          legalLink.href = LEGAL_PATH;
-          legalLink.className = linkClass;
-          legalLink.textContent = "Widerrufsbelehrung";
-          
-          // Style to make it look like a header/top-level link
-          legalLink.style.cssText = "display:block; margin-bottom:10px; cursor:pointer; text-decoration:underline; font-size:14px; color:inherit; font-weight:bold;";
-          
-          // FIX: Proper virtual routing on click
-          legalLink.onclick = (e) => { 
-            e.preventDefault(); 
-            window.history.pushState({}, "", LEGAL_PATH); 
-            handleRouting(); // Manually trigger the view update
-          };
+      const body = document.body;
 
-          // Inserts at the very beginning of the footer (on top)
-          footer.insertBefore(legalLink, footer.firstChild);
+      // Helper to inject a link that matches a sibling's structure
+      function adaptiveInject(selector, text, isModalTrigger) {
+        const container = document.querySelector(selector);
+        if (!container || container.querySelector(`.${linkClass}`)) return;
+
+        // Find a representative sibling link to copy
+        const sibling = container.querySelector('a');
+        if (!sibling) return;
+
+        const legalLink = document.createElement("a");
+        legalLink.href = LEGAL_PATH;
+        legalLink.textContent = text;
+        legalLink.className = `${sibling.className} ${linkClass}`;
+        
+        // Copy essential styles
+        const s = window.getComputedStyle(sibling);
+        legalLink.style.color = s.color;
+        legalLink.style.fontFamily = s.fontFamily;
+        legalLink.style.fontSize = s.fontSize;
+        legalLink.style.textDecoration = s.textDecoration;
+        legalLink.style.cursor = "pointer";
+
+        // Click Logic
+        legalLink.onclick = (e) => { 
+          e.preventDefault(); 
+          if (isModalTrigger) {
+            openModal();
+          } else {
+            window.history.pushState({}, "", LEGAL_PATH); 
+            handleRouting(); 
+          }
+        };
+
+        const parent = sibling.parentElement;
+
+        // CASE A: The site uses a List structure (Common in both Nav and Footer)
+        if (parent.tagName === "LI") {
+            const newLi = document.createElement("li");
+            newLi.className = parent.className; // Copy the <li> class for spacing/bullets
+            newLi.appendChild(legalLink);
+            
+            // For Nav, we usually append to the end of the list
+            parent.parentNode.appendChild(newLi);
+        } 
+        // CASE B: Plain Div/Nav (Horizontal or beside each other)
+        else {
+            legalLink.style.marginLeft = s.marginLeft !== "0px" ? s.marginLeft : "15px";
+            legalLink.style.display = s.display;
+            sibling.insertAdjacentElement('afterend', legalLink);
+        }
       }
 
-      // 2. Nav/Header Injection
+      // 1. Inject Footer (Page View)
+      adaptiveInject("footer", "Widerrufsbelehrung", false);
+
+      // 2. Inject Nav/Header (Modal Trigger)
       ["nav", "header"].forEach(tag => {
-        const container = document.querySelector(tag);
-        if (container && !container.querySelector(`.${linkClass}`)) {
-          const navLink = document.createElement("a");
-          navLink.href = LEGAL_PATH;
-          navLink.className = linkClass;
-          navLink.textContent = "Widerruf";
-          navLink.style.cssText = "margin-left:15px; cursor:pointer; text-decoration:underline; font-size:14px; color:inherit;";
-          navLink.onclick = (e) => { 
-            e.preventDefault(); 
-            openModal(); 
-          };
-          container.appendChild(navLink);
-        }
+        adaptiveInject(tag, "Widerruf", true);
       });
     }
-
     injectLinks();
     new MutationObserver(injectLinks).observe(document.body, { childList: true, subtree: true });
   }
