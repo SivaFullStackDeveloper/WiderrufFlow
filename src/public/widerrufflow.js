@@ -998,22 +998,35 @@
     floatBtn.onclick = (e) => { e.preventDefault(); openModal(); };
 
     // --- 6. AUTO-INJECTION ---
+    // --- AUTO-INJECTION (Header, Nav, and Footer) ---
     function injectLinks() {
+      const linkClass = "wf-link-injected";
+      
+      // 1. Footer Injection (Full Legal Text)
       const footer = document.querySelector("footer");
-      if (footer && !footer.querySelector(`a[href="${LEGAL_PATH}"]`)) {
+      if (footer && !footer.querySelector(`.${linkClass}`)) {
           const legalLink = document.createElement("a");
           legalLink.href = LEGAL_PATH;
-          legalLink.className = "wf-link";
+          legalLink.className = linkClass;
           legalLink.textContent = "Widerrufsbelehrung";
           legalLink.style.cssText = "margin-left:15px; cursor:pointer; text-decoration:underline; font-size:12px; color:inherit; opacity:0.8;";
-          
-          legalLink.onclick = (e) => {
-            e.preventDefault();
-            window.history.pushState({}, "", LEGAL_PATH);
-            handleRouting();
-          };
+          legalLink.onclick = (e) => { e.preventDefault(); window.history.pushState({}, "", LEGAL_PATH); handleRouting(); };
           footer.appendChild(legalLink);
       }
+
+      // 2. Nav/Header Injection (Opens Modal)
+      ["nav", "header"].forEach(tag => {
+        const container = document.querySelector(tag);
+        if (container && !container.querySelector(`.${linkClass}`)) {
+          const navLink = document.createElement("a");
+          navLink.href = LEGAL_PATH;
+          navLink.className = linkClass;
+          navLink.textContent = "Widerruf";
+          navLink.style.cssText = "margin-left:15px; cursor:pointer; text-decoration:underline; font-size:14px; color:inherit;";
+          navLink.onclick = (e) => { e.preventDefault(); openModal(); };
+          container.appendChild(navLink);
+        }
+      });
     }
 
     injectLinks();
