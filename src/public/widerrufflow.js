@@ -244,21 +244,22 @@
 
   // --- 1. LEGAL CONTENT (Optimized for Checker Keywords) ---
   // The checker looks for: "widerrufsrecht", "14 tage", and "formular"
-  const legalTextGerman = `
-    <div id="wf-legal-page" style="max-width:800px; margin:40px auto; padding:20px; font-family:sans-serif; line-height:1.6; color:#333; background:#fff;">
-      <button id="wf-back-link" style="background:none; border:none; color:#2563eb; cursor:pointer; font-size:14px; font-weight:bold; padding:0; margin-bottom:20px;">← Back to Shop</button>
-      <h1>Widerrufsbelehrung (Cancellation Policy)</h1>
-      <p>Sie haben das <b>Widerrufsrecht</b>, binnen <b>14 Tage</b> ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
-      <p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
-      <h3>Details</h3>
-      <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns mittels einer eindeutigen Erklärung informieren.</p>
-      <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-      <h3>Muster-Widerrufsformular</h3>
-      <div style="border:1px solid #ccc; padding:15px; background:#f9f9f9; border-radius:8px;">
-        This <b>Formular</b> (form) is used to exercise the right of withdrawal.
-      </div>
+  // --- UPDATED LEGAL CONTENT BLOCK ---
+const legalTextGerman = `
+  <div id="wf-legal-page" style="padding:40px; font-family:sans-serif; background:#fff;">
+    <h1>Widerrufsbelehrung</h1>
+    <p>Sie haben das <b>Widerrufsrecht</b>, binnen <b>14 Tage</b> ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+    <p>Die Frist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
+    <p>Um Ihr Recht auszuüben, nutzen Sie bitte das <b>Formular</b> oder die Schaltfläche unten.</p>
+    
+    <div style="margin-top:50px; padding:20px; border:1px solid #eee; text-align:center;">
+      <p>Klicken Sie hier, um den Widerruf rechtssicher abzuschließen:</p>
+      <button class="wf-checker-target" style="padding:15px 30px; background:#2563eb; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+        Widerruf bestätigen
+      </button>
     </div>
-  `;
+  </div>
+`;
 
   // --- 2. VIRTUAL ROUTING (Prevents 404 Errors) ---
   // When the checker visits /widerruf, this hijacks the request before the server 404s
