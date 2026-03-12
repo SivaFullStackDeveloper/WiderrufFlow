@@ -1442,6 +1442,125 @@ document.getElementById("resultText").innerHTML="Scan fehlgeschlagen";
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function scanWebsite() {
+    const url = document.getElementById("websiteInput").value;
+
+    if (!url) {
+        alert("Bitte Website eingeben");
+        return;
+    }
+
+    const progress = document.querySelector(".progress");
+    const bar = document.getElementById("progressBar");
+    const result = document.getElementById("scanResult");
+    const fill = document.getElementById("scoreFill");
+    const text = document.getElementById("resultText");
+    const scoreText = document.getElementById("scoreText");
+
+    // Reset UI
+    progress.style.display = "block";
+    result.style.display = "none";
+    bar.style.width = "0%";
+
+    // Smooth progress bar animation
+    let p = 0;
+    const interval = setInterval(() => {
+        p += (90 - p) * 0.1; // Slows down as it reaches 90%
+        bar.style.width = p + "%";
+    }, 200);
+
+    try {
+        const res = await fetch("/api/check-widerruf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+        
+        clearInterval(interval);
+        bar.style.width = "100%";
+
+        setTimeout(() => {
+            progress.style.display = "none";
+            result.style.display = "block";
+
+            // 1. Update Score & Bar Color
+            const score = data.score || 0;
+            scoreText.innerHTML = `Compliance Score: ${score} / 100`;
+            fill.style.width = score + "%";
+
+            if (score >= 90) {
+                result.className = "result success";
+                fill.style.background = "#1c7d41";
+            } else if (score >= 40) {
+                result.className = "result danger"; // Or create a 'warning' class
+                fill.style.background = "#f2994a"; // Orange
+            } else {
+                result.className = "result danger";
+                fill.style.background = "#d93025"; // Red
+            }
+
+            // 2. Generate Findings List from API
+            let findingsHtml = "";
+            
+            if (data.findings && data.findings.length > 0) {
+                findingsHtml = `<div style="margin-top: 15px; text-align: left;">`;
+                data.findings.forEach(item => {
+                    // Simple styling for the findings list
+                    findingsHtml += `<p style="margin-bottom: 8px; font-size: 0.95rem;">${item}</p>`;
+                });
+                findingsHtml += `</div>`;
+            }
+
+            // 3. Final Result Layout
+            if (score >= 90) {
+                text.innerHTML = `
+                    <strong>PERFEKTE COMPLIANCE</strong><br>
+                    ${findingsHtml}
+                    <p style="margin-top:15px;">Ihre Website erfüllt die gesetzlichen Anforderungen des § 356a BGB.</p>
+                `;
+            } else {
+                text.innerHTML = `
+                    <strong>⚠ COMPLIANCE RISIKO ERKANNT</strong><br>
+                    ${findingsHtml}
+                    <p style="margin: 15px 0;">Fehlende Elemente können zu Abmahnungen und Bußgeldern führen.</p>
+                    Unsere Analyse konnte keinen Widerruf-Button erkennen.
+<p style="margin: 15px 0;">
+Dies kann nach deutschem Verbraucherrecht zu:
+
+• Abmahnungen durch Wettbewerber<br>
+• Bußgeldern bis zu 50.000€<br>
+• rechtlichen Unterlassungsklagen
+
+führen.
+    </p>                
+                    <a href="index.html#demo" class="cta">Lösung implementieren</a>
+                 `;
+            }
+
+        }, 600);
+
+    } catch (e) {
+        clearInterval(interval);
+        result.style.display = "block";
+        result.className = "result danger";
+        text.innerHTML = "<strong>Fehler:</strong> Der Scan konnte nicht abgeschlossen werden. Bitte prüfen Sie die URL.";
+    }
+}
 </script>
 
 </body>

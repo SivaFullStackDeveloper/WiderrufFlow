@@ -4,249 +4,116 @@
 // const router = express.Router();
 
 // router.post("/check-widerruf", async (req, res) => {
+//   const { url } = req.body;
 
-// const { url } = req.body;
+//   if (!url || !url.startsWith("http")) {
+//     return res.json({
+//       status: "ERROR",
+//       message: "Invalid URL"
+//     });
+//   }
 
-// if (!url || !url.startsWith("http")) {
-// return res.json({
-// status: "ERROR",
-// message: "Invalid URL"
-// });
-// }
+//   let browser;
+//   try {
+//     browser = await puppeteer.launch({
+//       headless: true,
+//       args: ["--no-sandbox", "--disable-setuid-sandbox"]
+//     });
 
-// let browser;
+//     const page = await browser.newPage();
+//     await page.goto(url, { waitUntil: "networkidle2", timeout: 45000 });
 
-// try {
+//     // Function to check elements on page
+//     const result = await page.evaluate(() => {
+//       const keywords = [
+//         "widerruf",
+//         "widerrufsrecht",
+//         "widerrufsbelehrung",
+//         "widerruf erklären",
+//         "widerruf starten",
+//         "vertrag widerrufen",
+//         "retoure",
+//         "rückgabe",
+//         "retouren"
+//       ];
+//       const urlPatterns = [
+//         "/widerruf",
+//         "/widerrufsrecht",
+//         "/widerrufsbelehrung",
+//         "/retoure",
+//         "/return",
+//         "/retouren",
+//         "/returns"
+//       ];
 
-// browser = await puppeteer.launch({
-// headless: true,
-// args: ["--no-sandbox","--disable-setuid-sandbox"]
-// });
+//       function checkElement(el) {
+//         const text = ((el.innerText || el.textContent || "") + (el.value || "") + (el.getAttribute("aria-label") || "")).toLowerCase();
+//         const href = (el.getAttribute("href") || "").toLowerCase();
+//         const textMatch = keywords.some(k => text.includes(k));
+//         const urlMatch = urlPatterns.some(p => href.includes(p));
+//         if (textMatch && urlMatch) {
+//           // Resolve relative URLs
+//           let resolvedHref;
+//           try { resolvedHref = new URL(href, location.origin).href; } catch(e) { resolvedHref = href; }
+//           return { status: "PASSED", element: el.tagName, text: text.trim(), href: resolvedHref };
+//         }
+//         return null;
+//       }
 
-// const page = await browser.newPage();
+//       // Priority check: footer/nav deep links/buttons
+//       const priority = document.querySelectorAll("footer * a, footer * button, nav * a, nav * button");
+//       for (const el of priority) {
+//         const r = checkElement(el);
+//         if (r) return r;
+//       }
 
-// await page.goto(url, {
-// waitUntil: "domcontentloaded",
-// timeout: 30000
-// });
+//       // All other links/buttons
+//       const elements = document.querySelectorAll("a, button, input[type='submit'], input[type='button']");
+//       for (const el of elements) {
+//         const r = checkElement(el);
+//         if (r) return r;
+//       }
 
-// await new Promise(r => setTimeout(r, 2000));
+//       return { status: "FAILED", message: "No Widerruf link/button found" };
+//     });
 
-// const result = await page.evaluate(() => {
+//     // If a link/button is found, verify target page content
+//     if (result.status === "PASSED") {
+//       try {
+//         const newPage = await browser.newPage();
+//         await newPage.goto(result.href, { waitUntil: "networkidle2", timeout: 45000 });
+//         await newPage.waitForTimeout(2000);
 
-// const keywords = [
-// "widerruf",
-// "widerrufsrecht",
-// "widerrufsbelehrung",
-// "widerruf erklären",
-// "widerruf starten",
-// "vertrag widerrufen",
-// "retoure",
-// "rückgabe",
-// "retouren"
-// ];
-
-// const urlPatterns = [
-// "/widerruf",
-// "/widerrufsrecht",
-// "/widerrufsbelehrung",
-// "/retoure",
-// "/return",
-// "/retouren",
-// "/returns"
-// ];
-
-// function checkElement(el){
-
-// const text = (
-// (el.innerText || el.textContent || "") +
-// (el.value || "") +
-// (el.getAttribute("aria-label") || "")
-// ).toLowerCase();
-
-// const href = (el.getAttribute("href") || "").toLowerCase();
-
-// const textMatch = keywords.some(k => text.includes(k));
-// const urlMatch = urlPatterns.some(p => href.includes(p));
-
-// if(textMatch && urlMatch){
-// return {
-// status:"PASSED",
-// element: el.tagName,
-// text: text.trim(),
-// href: href
-// };
-// }
-
-// return null;
-
-// }
-
-// const priorityAreas = document.querySelectorAll("footer a, footer button, nav a, nav button");
-
-// for(const el of priorityAreas){
-
-// const result = checkElement(el);
-// if(result) return result;
-
-// }
-
-// const elements = document.querySelectorAll(
-// "a,button,input[type='submit'],input[type='button']"
-// );
-
-// for(const el of elements){
-
-// const result = checkElement(el);
-// if(result) return result;
-
-// }
-
-// return {
-// status:"FAILED",
-// message:"No legally visible Widerruf link or button detected"
-// };
-
-// });
-
-// await browser.close();
-
-// res.json(result);
-
-// } catch(err){
-
-// if(browser) await browser.close();
-
-// res.json({
-// status:"ERROR",
-// message:err.message
-// });
-
-// }
-
-// });
-
-// module.exports = router;
-
-
-/////// item no 2
-
-// const express = require("express");
-// const puppeteer = require("puppeteer");
-
-// const router = express.Router();
-
-// router.post("/check-widerruf", async (req, res) => {
-//     const { url } = req.body;
-
-//     if (!url || !url.startsWith("http")) {
-//         return res.json({
-//             status: "ERROR",
-//             message: "Invalid URL"
-//         });
-//     }
-
-//     let browser;
-//     try {
-//         browser = await puppeteer.launch({
-//             headless: true,
-//             args: ["--no-sandbox", "--disable-setuid-sandbox"]
+//         const legalText = await newPage.evaluate(() => {
+//           const content = document.body.innerText.toLowerCase().replace(/\s+/g, " ");
+//           return content.includes("widerrufsrecht") && content.includes("14 tage") && content.includes("formular");
 //         });
 
-//         const page = await browser.newPage();
-//         await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-//         await page.waitForTimeout(2000);
-
-//         // Function to check elements on page
-//         const result = await page.evaluate(() => {
-//             const keywords = [
-//                 "widerruf",
-//                 "widerrufsrecht",
-//                 "widerrufsbelehrung",
-//                 "widerruf erklären",
-//                 "widerruf starten",
-//                 "vertrag widerrufen",
-//                 "retoure",
-//                 "rückgabe",
-//                 "retouren"
-//             ];
-//             const urlPatterns = [
-//                 "/widerruf",
-//                 "/widerrufsrecht",
-//                 "/widerrufsbelehrung",
-//                 "/retoure",
-//                 "/return",
-//                 "/retouren",
-//                 "/returns"
-//             ];
-
-//             function checkElement(el){
-//                 const text = ((el.innerText || el.textContent || "") + (el.value || "") + (el.getAttribute("aria-label") || "")).toLowerCase();
-//                 const href = (el.getAttribute("href") || "").toLowerCase();
-//                 const textMatch = keywords.some(k => text.includes(k));
-//                 const urlMatch = urlPatterns.some(p => href.includes(p));
-//                 return textMatch && urlMatch ? {status:"PASSED", element: el.tagName, text: text.trim(), href: href} : null;
-//             }
-
-//             // Priority: footer/nav links/buttons
-//             const priority = document.querySelectorAll("footer a, footer button, nav a, nav button");
-//             for (const el of priority) {
-//                 const r = checkElement(el);
-//                 if (r) return r;
-//             }
-
-//             // All other links/buttons
-//             const elements = document.querySelectorAll("a, button, input[type='submit'], input[type='button']");
-//             for (const el of elements) {
-//                 const r = checkElement(el);
-//                 if (r) return r;
-//             }
-
-//             return {status:"FAILED", message:"No Widerruf link/button found"};
-//         });
-
-//         // If we found a link, verify target page contains Widerrufsbelehrung
-//         if (result.status === "PASSED") {
-//             try {
-//                 const newPage = await browser.newPage();
-//                 await newPage.goto(result.href, { waitUntil: "domcontentloaded", timeout: 30000 });
-//                 await newPage.waitForTimeout(2000);
-
-//                 const legalText = await newPage.evaluate(() => {
-//                     const content = document.body.innerText.toLowerCase();
-//                     // Basic check for full Widerrufsbelehrung
-//                     if (content.includes("widerrufsrecht") && content.includes("14 tage") && content.includes("formular")) {
-//                         return true;
-//                     }
-//                     return false;
-//                 });
-
-//                 if (!legalText) {
-//                     result.status = "FAILED";
-//                     result.message = "Widerrufsbelehrung not fully found on target page";
-//                 }
-
-//                 await newPage.close();
-//             } catch (e) {
-//                 result.status = "FAILED";
-//                 result.message = "Unable to verify linked Widerrufsbelehrung page";
-//             }
+//         if (!legalText) {
+//           result.status = "FAILED";
+//           result.message = "Widerrufsbelehrung not fully found on target page";
 //         }
 
-//         await browser.close();
-//         res.json(result);
-
-//     } catch (err) {
-//         if (browser) await browser.close();
-//         res.json({
-//             status: "ERROR",
-//             message: err.message
-//         });
+//         await newPage.close();
+//       } catch (e) {
+//         result.status = "FAILED";
+//         result.message = "Unable to verify linked Widerrufsbelehrung page";
+//       }
 //     }
+
+//     await browser.close();
+//     res.json(result);
+
+//   } catch (err) {
+//     if (browser) await browser.close();
+//     res.json({
+//       status: "ERROR",
+//       message: err.message
+//     });
+//   }
 // });
 
 // module.exports = router;
-
 
 
 
@@ -259,10 +126,7 @@ router.post("/check-widerruf", async (req, res) => {
   const { url } = req.body;
 
   if (!url || !url.startsWith("http")) {
-    return res.json({
-      status: "ERROR",
-      message: "Invalid URL"
-    });
+    return res.json({ status: "ERROR", message: "Invalid URL" });
   }
 
   let browser;
@@ -275,93 +139,98 @@ router.post("/check-widerruf", async (req, res) => {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2", timeout: 45000 });
 
-    // Function to check elements on page
-    const result = await page.evaluate(() => {
-      const keywords = [
-        "widerruf",
-        "widerrufsrecht",
-        "widerrufsbelehrung",
-        "widerruf erklären",
-        "widerruf starten",
-        "vertrag widerrufen",
-        "retoure",
-        "rückgabe",
-        "retouren"
-      ];
-      const urlPatterns = [
-        "/widerruf",
-        "/widerrufsrecht",
-        "/widerrufsbelehrung",
-        "/retoure",
-        "/return",
-        "/retouren",
-        "/returns"
-      ];
+    // Initialize the Audit Report
+    const auditReport = {
+      score: 0,
+      hasEntryButton: false, // Checkpoint 1
+      hasLegalText: false,   // Checkpoint 2
+      hasConfirmButton: false, // Checkpoint 3
+      findings: [],
+      status: "FAILED"
+    };
 
-      function checkElement(el) {
-        const text = ((el.innerText || el.textContent || "") + (el.value || "") + (el.getAttribute("aria-label") || "")).toLowerCase();
-        const href = (el.getAttribute("href") || "").toLowerCase();
-        const textMatch = keywords.some(k => text.includes(k));
-        const urlMatch = urlPatterns.some(p => href.includes(p));
-        if (textMatch && urlMatch) {
-          // Resolve relative URLs
+    // Step 1: Check for the Entry Link/Button
+    const entryCheck = await page.evaluate(() => {
+      const keywords = ["widerruf", "widerrufsrecht", "vertrag widerrufen", "widerruf erklären"];
+      // We check all links but prioritize nav and footer
+      const elements = Array.from(document.querySelectorAll("a, button, footer a, nav a"));
+      
+      for (const el of elements) {
+        const text = (el.innerText || "").toLowerCase();
+        const href = el.getAttribute("href") || "";
+        if (keywords.some(k => text.includes(k))) {
           let resolvedHref;
           try { resolvedHref = new URL(href, location.origin).href; } catch(e) { resolvedHref = href; }
-          return { status: "PASSED", element: el.tagName, text: text.trim(), href: resolvedHref };
+          return { found: true, href: resolvedHref };
         }
-        return null;
       }
-
-      // Priority check: footer/nav deep links/buttons
-      const priority = document.querySelectorAll("footer * a, footer * button, nav * a, nav * button");
-      for (const el of priority) {
-        const r = checkElement(el);
-        if (r) return r;
-      }
-
-      // All other links/buttons
-      const elements = document.querySelectorAll("a, button, input[type='submit'], input[type='button']");
-      for (const el of elements) {
-        const r = checkElement(el);
-        if (r) return r;
-      }
-
-      return { status: "FAILED", message: "No Widerruf link/button found" };
+      return { found: false };
     });
 
-    // If a link/button is found, verify target page content
-    if (result.status === "PASSED") {
+    if (entryCheck.found) {
+      auditReport.hasEntryButton = true;
+      auditReport.score += 33;
+      auditReport.findings.push("✅ Widerruf-Link/Button auf der Seite gefunden.");
+
+      // Step 2 & 3: Navigate to the target page to verify content and button
       try {
         const newPage = await browser.newPage();
-        await newPage.goto(result.href, { waitUntil: "networkidle2", timeout: 45000 });
-        await newPage.waitForTimeout(2000);
+        await newPage.goto(entryCheck.href, { waitUntil: "networkidle2", timeout: 45000 });
+        await new Promise(r => setTimeout(r, 3000)); // Wait for widgets/JS
 
-        const legalText = await newPage.evaluate(() => {
+        const deepAnalysis = await newPage.evaluate(() => {
           const content = document.body.innerText.toLowerCase().replace(/\s+/g, " ");
-          return content.includes("widerrufsrecht") && content.includes("14 tage") && content.includes("formular");
+          
+          // Check for § 355/356 BGB text requirements
+          const textMatch = content.includes("widerrufsrecht") && 
+                            content.includes("14 tage") && 
+                            content.includes("formular");
+
+          // Check for § 356a BGB mandatory "Confirm" button
+          const confirmKeywords = ["widerruf bestätigen", "jetzt widerrufen", "bestätigen"];
+          const buttons = Array.from(document.querySelectorAll("button, input[type='submit'], .btn, .button, a"));
+          
+          const buttonMatch = buttons.some(btn => {
+            const btnText = (btn.innerText || btn.value || "").toLowerCase();
+            return confirmKeywords.some(k => btnText.includes(k));
+          });
+
+          return { textMatch, buttonMatch };
         });
 
-        if (!legalText) {
-          result.status = "FAILED";
-          result.message = "Widerrufsbelehrung not fully found on target page";
+        if (deepAnalysis.textMatch) {
+          auditReport.hasLegalText = true;
+          auditReport.score += 33;
+          auditReport.findings.push("✅ Widerrufsbelehrung auf der Zielseite erkannt.");
+        } else {
+          auditReport.findings.push("❌ Widerrufsbelehrung unvollständig oder nicht gefunden.");
+        }
+
+        if (deepAnalysis.buttonMatch) {
+          auditReport.hasConfirmButton = true;
+          auditReport.score += 34; // Total 100
+          auditReport.findings.push("✅ Gesetzlicher 2-Stufen-Widerruf (§ 356a BGB) erkannt.");
+        } else {
+          auditReport.findings.push("❌ Mandatory 'Widerruf bestätigen' button missing in Footer or Step 2.");
         }
 
         await newPage.close();
       } catch (e) {
-        result.status = "FAILED";
-        result.message = "Unable to verify linked Widerrufsbelehrung page";
+        auditReport.findings.push("⚠️ Zielseite konnte nicht auf 2-Stufen-Konformität geprüft werden.");
       }
+    } else {
+      auditReport.findings.push("❌ Kein gesetzlich erforderlicher Widerruf-Button gefunden.");
     }
 
+    // Set overall status based on score
+    auditReport.status = auditReport.score >= 90 ? "PASSED" : "FAILED";
+
     await browser.close();
-    res.json(result);
+    res.json(auditReport);
 
   } catch (err) {
     if (browser) await browser.close();
-    res.json({
-      status: "ERROR",
-      message: err.message
-    });
+    res.json({ status: "ERROR", message: err.message });
   }
 });
 
