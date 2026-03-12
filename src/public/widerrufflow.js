@@ -998,11 +998,10 @@
     floatBtn.onclick = (e) => { e.preventDefault(); openModal(); };
 
     // --- 6. AUTO-INJECTION ---
-    // --- AUTO-INJECTION (Header, Nav, and Footer) ---
-    function injectLinks() {
+  function injectLinks() {
       const linkClass = "wf-link-injected";
       
-      // 1. Footer Injection (Full Legal Text)
+      // 1. Footer (Ensures the scanner sees the /widerruf URL)
       const footer = document.querySelector("footer");
       if (footer && !footer.querySelector(`.${linkClass}`)) {
           const legalLink = document.createElement("a");
@@ -1014,7 +1013,7 @@
           footer.appendChild(legalLink);
       }
 
-      // 2. Nav/Header Injection (Opens Modal)
+      // 2. Nav/Header (Crucial for the "Revocation Button" detection)
       ["nav", "header"].forEach(tag => {
         const container = document.querySelector(tag);
         if (container && !container.querySelector(`.${linkClass}`)) {
