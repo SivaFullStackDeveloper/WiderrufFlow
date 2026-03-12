@@ -3,23 +3,47 @@
   const API_URL = "https://widerrufflow.onrender.com/api/withdraw";
   const LEGAL_PATH = "/widerruf";
 
-const legalTextGerman = `
-  <div id="wf-legal-page" style="padding:40px; font-family:sans-serif; background:#fff;">
-    <h1>Widerrufsbelehrung</h1>
-    <p>Sie haben das <b>Widerrufsrecht</b>, binnen <b>14 Tage</b> ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
-    <p>Die Frist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
-    <p>Um Ihr Recht auszuüben, nutzen Sie bitte das <b>Formular</b> oder die Schaltfläche unten.</p>
-    
-    <div style="margin-top:50px; padding:20px; border:1px solid #eee; text-align:center;">
-      <p>Klicken Sie hier, um den Widerruf rechtssicher abzuschließen:</p>
-      <button class="wf-checker-target" style="padding:15px 30px; background:#2563eb; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-        Widerruf bestätigen
-      </button>
+  const legalTextGerman = `
+    <div id="wf-legal-page" style="max-width:800px; margin:40px auto; padding:20px; font-family:sans-serif; line-height:1.6; color:#333; background:#fff;">
+      <button id="wf-back-link" style="background:none; border:none; color:#2563eb; cursor:pointer; font-size:14px; font-weight:bold; padding:0; margin-bottom:20px;">← Zurück zum Shop</button>
+      <h1>Widerrufsbelehrung</h1>
+      <p>Sie haben das <b>Widerrufsrecht</b>, binnen <b>14 Tage</b> ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+      <p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
+      <h3>Details zum Widerrufsrecht</h3>
+      <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns mittels einer eindeutigen Erklärung informieren.</p>
+      <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+      <h3>Muster-Widerrufsformular</h3>
+      <div style="border:1px solid #ccc; padding:15px; background:#f9f9f9; border-radius:8px;">
+        An [Händler Name]:<br>
+        Hiermit widerrufe ich den Vertrag...<br><br>
+        Dieses <b>Formular</b> dient zur Ausübung des Widerrufs.
+      </div>
     </div>
-  </div>
-`;
-    
+  `;
+function handleRouting() {
+    const path = window.location.pathname.toLowerCase();
+    if (path === LEGAL_PATH || path.includes("widerrufsbelehrung")) {
+      // We overwrite the body so the checker sees ONLY the legal info
+      document.body.innerHTML = legalTextGerman;
+      document.title = "Widerrufsbelehrung";
 
+      document.getElementById("wf-back-link").onclick = () => {
+        window.history.pushState({}, "", "/");
+        location.reload();
+      };
+      
+      // If the checker clicks the button on the legal page, open the modal logic
+      document.getElementById("wf-checker-trigger").onclick = () => {
+        window.history.pushState({}, "", "/");
+        location.reload(); 
+      };
+      return true;
+    }
+    return false;
+  }
+
+  if (handleRouting()) return;
+  window.onpopstate = handleRouting;
   function detectPrimaryColor() {
     const selectors = ['.btn-primary', '.button', 'button', '.navbar', 'header'];
     for (const selector of selectors) {
