@@ -1,0 +1,27 @@
+<div class="rf-modal" id="global-modal" aria-hidden="true">
+  <div class="rf-modal-card glass">
+    <div class="rf-modal-header">
+      <h2 id="modal-title">Create New Flow</h2>
+      <button id="close-modal" class="rf-icon-btn" type="button" aria-label="close">✕</button>
+    </div>
+    <form id="quick-flow-form" class="rf-modal-form">
+      <label>
+        Customer Name
+        <input type="text" name="customer" placeholder="Acme GmbH" required />
+      </label>
+      <label>
+        Case Type
+        <select name="type">
+          <option>Chargeback</option>
+          <option>Widerruf</option>
+          <option>Refund</option>
+        </select>
+      </label>
+      <label>
+        Amount (€)
+        <input type="number" name="amount" min="1" step="0.01" placeholder="149.90" required />
+      </label>
+      <button class="rf-button rf-button-primary" type="submit">Save Case</button>
+    </form>
+  </div>
+</div>

@@ -372,6 +372,7 @@ function injectWiderrufLinks() {
     handleRouting();
     window.addEventListener('hashchange', handleRouting);
   }
+  
 
   if (document.readyState === "complete") init();
   else window.addEventListener("load", init);

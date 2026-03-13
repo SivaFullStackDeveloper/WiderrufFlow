@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RevFlow OS | Enterprise Ledger</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #0f172a;
+            --bg: #f8fafc;
+            --border: #e2e8f0;
+            --text-dim: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+/* TOPBAR */
+#toast{
+position:fixed;
+bottom:30px;
+right:30px;
+background:#0f172a;
+color:white;
+padding:12px 20px;
+border-radius:10px;
+font-size:13px;
+opacity:0;
+transform:translateY(10px);
+transition:all .3s;
+}
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.global-search{
+width:320px;
+padding:10px 14px;
+border-radius:10px;
+border:1px solid var(--border);
+background:white;
+font-size:14px;
+}
+
+.topbar-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+@media(max-width:1000px){
+
+.cards{
+grid-template-columns:repeat(2,1fr);
+}
+
+.sidebar{
+width:200px;
+}
+
+}
+
+@media(max-width:700px){
+
+.sidebar{
+display:none;
+}
+
+.cards{
+grid-template-columns:1fr;
+}
+
+.main{
+padding:20px;
+}
+
+}
+.notif{
+width:38px;
+height:38px;
+border-radius:10px;
+background:white;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.profile-mini{
+display:flex;
+align-items:center;
+gap:10px;
+background:white;
+border:1px solid var(--border);
+padding:6px 12px;
+border-radius:12px;
+}
+
+.avatar-mini{
+width:32px;
+height:32px;
+background:var(--primary);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:8px;
+font-weight:700;
+}
+
+.pname{
+font-size:13px;
+font-weight:700;
+}
+
+.prole{
+font-size:11px;
+color:var(--text-dim);
+}
+
+/* CARD HOVER EFFECT */
+
+.card{
+transition:all .25s ease;
+}
+
+.card:hover{
+transform:translateY(-4px);
+box-shadow:0 10px 30px rgba(0,0,0,0.06);
+}
+
+/* SIDEBAR PREMIUM */
+
+.sidebar{
+box-shadow:8px 0 30px rgba(0,0,0,0.1);
+}
+
+/* TABLE HOVER */
+
+tbody tr:hover{
+background:#f8fafc;
+}
+
+/* BUTTON MICRO ANIMATION */
+
+.btn{
+transition:all .2s ease;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#cbd5e1;
+border-radius:10px;
+}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: var(--dark);
+            color: white;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .logo { font-weight: 800; font-size: 22px; margin-bottom: 30px; letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+
+        .nav {
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav.active { background: var(--primary); color: white; }
+
+        /* MAIN CONTENT */
+        .main { flex: 1; overflow-y: auto; padding: 40px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* CARDS */
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+        .card { background: white; padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+        .card p { font-size: 12px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .card h3 { font-size: 32px; margin-top: 8px; font-weight: 800; }
+
+        /* TABLE */
+        .table-container { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f8fafc; padding: 16px; color: var(--text-dim); font-weight: 700; text-align: left; border-bottom: 1px solid var(--border); }
+        td { padding: 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+
+        /* STATUS BADGES */
+        .status { 
+            display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; 
+            font-size: 11px; font-weight: 700; border: 1px solid transparent; 
+        }
+        .pending { background: #fef3c7; color: #d97706; border-color: #fde68a; }
+        .approved { background: #dcfce7; color: #16a34a; border-color: #bbf7d0; }
+        .rejected { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-box {
+            background: white; width: 440px; padding: 32px; border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: center;
+        }
+
+        /* BUTTONS */
+        .btn { padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: 600; border: none; transition: 0.2s; }
+        .btn-primary { background: var(--dark); color: white; }
+        .btn-outline { background: white; border: 1px solid var(--border); }
+        .btn-manage { background: white; border: 1px solid var(--border); padding: 6px 14px; border-radius: 8px; font-size: 12px; }
+        .btn-manage:hover { background: #f8fafc; }
+
+        .avatar {
+            width: 32px; height: 32px; border-radius: 8px; color: white;
+            display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">RevFlow<span>OS</span></div>
+        <div class="nav active" data-target="overview">Overview</div>
+        <div class="nav" data-target="audit">Master Ledger</div>
+        <div class="nav" data-target="analytics">Analytics</div>
+        <div class="nav" data-target="widget">Profile</div>
+        <div class="nav" data-target="widget">Email Template</div>
+        <div class="nav" data-target="widget">Widerrufsbelehrung Template</div>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+
+<div class="topbar-left">
+<input placeholder="Search anything..." class="global-search">
+</div>
+
+<div class="topbar-right">
+
+<div class="notif">🔔</div>
+
+<div class="profile-mini">
+<div class="avatar-mini">S</div>
+<div>
+<div class="pname">Siva</div>
+<div class="prole">Administrator</div>
+</div>
+</div>
+
+</div>
+
+</div>
+        <div id="overview" class="section active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <h1 style="font-size: 28px; font-weight: 800;">System Overview</h1>
+                <button class="btn btn-primary" style="background: var(--primary);" onclick="addRequest()">Simulate Traffic</button>
+            </div>
+
+            <div class="cards">
+                <div class="card"><p>Total Requests</p><h3 id="count">0</h3></div>
+                <div class="card"><p>Approved</p><h3 id="approved" style="color: #16a34a;">0</h3></div>
+                <div class="card"><p>Rejected</p><h3 id="rejected" style="color: #dc2626;">0</h3></div>
+                <div class="card"><p>Pending</p><h3 id="pending" style="color: #d97706;">0</h3></div>
+            </div>
+        </div>
+
+        <div id="audit" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h1 style="font-size: 28px; font-weight: 800;">Master Ledger</h1>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+                    <button class="btn btn-primary" onclick="addRequest()">+ New Entry</button>
+                </div>
+            </div>
+<div style="display: flex; gap: 16px; margin-bottom: 24px; padding: 16px; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);">
+    <input type="text" 
+           id="ledger-search" 
+           placeholder="Search by Order ID or Customer Name..." 
+           oninput="filterLedger()"
+           style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none;">
+    
+    <select id="status-filter" onchange="filterLedger()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; background: white;">
+        <option value="all">All Statuses</option>
+        <option value="Neu">Neu</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+    </select>
+</div>
+            <div class="table-container">
+                <table id="table">
+                    <thead>
+                        <tr>
+                            <th>ORDER ID</th>
+                            <th>CUSTOMER</th>
+                            <th>TIMESTAMP</th>
+                            <th>STATUS</th>
+                            <th style="text-align: right;">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="analytics" class="section">
+            <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 24px;">Analytics</h1>
+            <div class="card" style="max-width: 400px;">
+                <p>Efficiency Rate</p>
+                <h3>94.2%</h3>
+                <div style="height: 8px; background: #f1f5f9; border-radius: 4px; margin-top: 15px; overflow: hidden;">
+                    <div style="width: 94%; height: 100%; background: var(--primary);"></div>
+                </div>
+            </div>
+        </div>
+<!-- 
+<section class="card">
+
+<h2>Email Template</h2>
+
+<label>Subject</label>
+<input id="emailSubject" type="text" placeholder="Withdrawal confirmation – {{orderId}}">
+
+<label>Email Body</label>
+<textarea id="emailBody" rows="10">
+
+Hello {{customerName}},
+
+We have received your withdrawal request for order {{orderId}}.
+
+Our team will review the request according to EU consumer law.
+
+Order Details:
+Order ID: {{orderId}}
+Date: {{orderDate}}
+
+You will receive another email once the request is approved or rejected.
+
+Best regards  
+{{companyName}}
+
+</textarea>
+
+<button onclick="saveEmailTemplate()">Save Email Template</button>
+
+</section> -->
+
+<!-- 
+<section class="card">
+
+<h2>Widerrufsbelehrung Template</h2>
+
+<p>
+According to German consumer law (BGB §356), merchants must provide a withdrawal instruction.
+Customize your legal instruction below.
+</p>
+
+<textarea id="widerrufTemplate" rows="18">
+
+Widerrufsbelehrung
+
+Verbraucher haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
+
+Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter die Ware erhalten haben.
+
+Um Ihr Widerrufsrecht auszuüben, müssen Sie uns
+
+{{companyName}}
+{{companyAddress}}
+Email: {{supportEmail}}
+
+mittels einer eindeutigen Erklärung über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.
+
+Sie können dafür das bereitgestellte Widerrufsformular oder eine andere eindeutige Erklärung verwenden.
+
+Folgen des Widerrufs
+
+Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben,
+einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben,
+dass Sie eine andere Art der Lieferung als die von uns angebotene günstigste Standardlieferung gewählt haben),
+unverzüglich und spätestens binnen vierzehn Tagen zurückzuzahlen.
+
+Die Rückzahlung erfolgt mit demselben Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben,
+es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart.
+
+--------------------------------------------------------
+
+Haftungsausschluss
+
+Diese Vorlage dient ausschließlich als technische Unterstützung zur Erstellung einer Widerrufsbelehrung.
+
+RevFlow / WiderrufFlow stellt keine Rechtsberatung dar und übernimmt keine Verantwortung für die
+Richtigkeit, Vollständigkeit oder rechtliche Wirksamkeit der bereitgestellten Inhalte.
+
+Händler sind selbst dafür verantwortlich, ihre Widerrufsbelehrung gemäß den geltenden Gesetzen,
+insbesondere §356 BGB, zu prüfen und anzupassen.
+
+</textarea>
+
+<button onclick="saveWiderrufTemplate()">Save Widerruf Template</button>
+
+</section> -->
+
+
+<div id="widget" class="section">
+
+<h1 style="font-size:28px;font-weight:800;margin-bottom:28px;">Profile Settings</h1>
+
+<div style="max-width:900px;margin:auto;display:flex;flex-direction:column;gap:24px;">
+
+<!-- COMPANY INFO -->
+
+<div class="card">
+<p style="margin-top:16px;">API Token</p>
+
+<input id="profile-token"
+placeholder="rf_live_XXXXXXXX"
+style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+
+
+<p style="margin-top:16px;">Legal Entity</p>
+
+<input id="profile-legal"
+placeholder="Example GmbH"
+style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+<p>Company Name</p>
+
+<input id="profile-company"
+placeholder="Example GmbH"
+style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+
+<p style="margin-top:16px;">Full Website Domain</p>
+
+<input id="profile-domain"
+placeholder="https://example.com"
+style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+
+</div>
+
+
+<!-- BRAND SETTINGS -->
+
+<div class="card">
+
+<p>Brand Color</p>
+
+<input id="profile-color"
+type="color"
+style="margin-top:10px;width:120px;height:40px;border-radius:8px;border:1px solid var(--border)">
+
+<p style="margin-top:16px;">Language</p>
+
+<select
+style="margin-top:10px;width:200px;padding:10px;border-radius:8px;border:1px solid var(--border);background:white">
+
+<option>Deutsch (Standard)</option>
+<option>English (EU)</option>
+
+</select>
+
+</div>
+
+
+<!-- WEBHOOK -->
+
+<div class="card">
+
+<p>Webhook Configuration</p>
+
+<input id="webhook-url"
+placeholder="https://example.com/api/revflow-webhook"
+style="margin-top:10px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)">
+
+<p style="margin-top:10px;font-size:12px;color:var(--text-dim)">
+Events triggered:
+<br>
+• Withdrawal request created
+<br>
+• Request approved
+<br>
+• Request rejected
+</p>
+
+</div>
+
+
+<!-- DOMAIN VERIFICATION -->
+
+<div class="card">
+
+<p>Domain Verification</p>
+
+<div style="margin-top:12px;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:10px;font-family:monospace;font-size:12px">
+
+&lt;meta name="revflow-domain-verification" content="rf_verify_29skd92"&gt;
+
+</div>
+
+<button class="btn btn-outline" style="margin-top:12px;">
+Verify Domain
+</button>
+
+</div>
+
+
+<!-- BRAND PREVIEW -->
+
+<div class="card">
+
+<p>Client Branding Preview</p>
+
+<div style="margin-top:14px;border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;justify-content:space-between;align-items:center">
+
+<div>
+<div style="font-weight:700;">Widerruf / Rückgabe</div>
+<div style="font-size:12px;color:var(--text-dim)">Customer withdrawal portal</div>
+</div>
+
+<button style="background:var(--primary);color:white;border:none;padding:10px 18px;border-radius:8px;font-weight:700">
+Open Portal
+</button>
+
+</div>
+
+</div>
+
+
+<!-- INSTALL SCRIPT -->
+
+<div class="card">
+
+<p>Widget Installation</p>
+
+<div style="margin-top:14px;font-size:14px;line-height:1.6">
+
+<b>1. Copy script</b><br>
+Copy the installation code below.
+
+<br><br>
+
+<b>2. Paste before &lt;/body&gt;</b><br>
+Place the script before the closing <code>&lt;/body&gt;</code> tag of your website.
+
+<br><br>
+
+<b>3. Widget appears automatically</b><br>
+The RevFlow withdrawal widget will load on your storefront automatically.
+
+</div>
+
+<textarea id="installCode"
+readonly
+style="margin-top:14px;width:100%;height:110px;padding:12px;border-radius:10px;border:1px solid var(--border);font-family:monospace">
+</textarea>
+
+<button class="btn btn-outline" style="margin-top:12px;" onclick="copyInstall()">
+Copy Install Code
+</button>
+
+</div>
+
+
+<button class="btn btn-primary" style="width:200px;background:var(--primary)" onclick="saveProfile()">
+Save Profile
+</button>
+
+</div>
+
+</div>
+
+    </div>
+
+    
+
+    <div class="modal-overlay" id="modal" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 id="modalTitle" style="font-size: 20px; font-weight: 800;">Manage Request</h2>
+                <span style="background: #eff6ff; color: #2563eb; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;">REVIEW</span>
+            </div>
+            
+            <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 24px; line-height: 1.5;">
+                Please verify customer proof before updating status. Approving will generate a legal revocation timestamp.
+            </p>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: left;">
+                <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 4px;">Security Hash (SHA256)</div>
+                <div id="modalHash" style="font-family: monospace; font-size: 12px; word-break: break-all; font-weight: 600;">---</div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button class="btn" style="flex: 1; background: #fee2e2; color: #dc2626;" onclick="reject()">Reject</button>
+                <button class="btn" style="flex: 1; background: #dcfce7; color: #16a34a;" onclick="approve()">Approve</button>
+            </div>
+            
+            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <button class="btn btn-outline" style="width: 100%; margin-bottom: 10px;" onclick="exportPDF()">📄 Download Legal Proof</button>
+                <button class="btn" style="width: 100%; color: var(--text-dim);" onclick="closeModal()">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentRow, currentOrder, currentHash;
+        let stats = { total: 0, approved: 0, rejected: 0, pending: 0 };
+
+        // Navigation
+        document.querySelectorAll(".nav").forEach(n => {
+            n.onclick = function() {
+                document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
+                this.classList.add("active");
+                document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+                document.getElementById(this.dataset.target).classList.add("active");
+            }
+        });
+
+        // Crypto Helpers
+        async function sha256(text) {
+            const buffer = new TextEncoder().encode(text);
+            const hash = await crypto.subtle.digest("SHA-256", buffer);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        // Add Request Logic
+        async function addRequest() {
+    const names = ["Max Mustermann", "Erika Schmidt", "Laura Reinsen", "Markus Meiritz"];
+    const colors = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981'];
+    
+    let order = "#ORD-" + Math.floor(9000 + Math.random() * 1000);
+    let customer = names[Math.floor(Math.random() * names.length)];
+    let color = colors[Math.floor(Math.random() * colors.length)];
+let timestamp = new Date().toLocaleString('de-DE', { hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    let hash = await sha256(order + customer + Date.now());
+
+    let tr = document.createElement("tr");
+    tr.setAttribute('data-hash', hash); // Store hash on the row for PDF generation
+    tr.innerHTML = `
+        <td>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="checkbox">
+                <span style="font-family: monospace; font-weight: 700; color: var(--primary);">${order}</span>
+            </div>
+        </td>
+        <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="avatar" style="background: ${color}">${customer[0]}</div>
+                <div>
+                    <div style="font-weight: 600; font-size: 13px;">${customer}</div>
+                    <div style="font-size: 11px; color: var(--text-dim);">${customer.toLowerCase().replace(' ', '.')}@example.de</div>
+                </div>
+            </div>
+        </td>
+        <td style="color: var(--text-dim); font-size: 13px;">${timestamp}</td>
+        <td><span class="status pending">Neu</span></td>
+        <td style="text-align: right;">
+            <div class="actions-container" style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                <button class="btn-manage" onclick="manage('${order}', '${hash}', this)">Manage</button>
+            </div>
+        </td>
+    `;
+
+    document.getElementById("ledger-body").prepend(tr);
+    stats.total++; stats.pending++;
+    updateStats();
+}
+
+        // Modal Handlers
+        function manage(order, hash, btn) {
+            currentOrder = order;
+            currentHash = hash;
+            currentRow = btn.closest("tr");
+            document.getElementById("modalTitle").innerText = order;
+            document.getElementById("modalHash").innerText = hash;
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function closeModal() { document.getElementById("modal").style.display = "none"; }
+
+      function approve() {
+    currentRow.cells[3].innerHTML = '<span class="status approved">Approved</span>';
+    injectPdfButton(currentRow);
+    stats.pending--; stats.approved++;
+    updateStats();
+    closeModal();
+}
+
+function reject() {
+    currentRow.cells[3].innerHTML = '<span class="status rejected">Rejected</span>';
+    injectPdfButton(currentRow);
+    stats.pending--; stats.rejected++;
+    updateStats();
+    closeModal();
+}
+
+// Helper to add the button to the row
+function injectPdfButton(row) {
+    const container = row.querySelector('.actions-container');
+    const orderId = row.cells[0].innerText.trim();
+    
+    // Prevent duplicate buttons
+    if (container.querySelector('.btn-pdf')) return;
+
+    const pdfBtn = document.createElement('button');
+    pdfBtn.className = 'btn-pdf';
+    pdfBtn.innerHTML = '📄';
+    pdfBtn.title = 'Download Legal Proof';
+    pdfBtn.style.cssText = `
+        background: none; 
+        border: none; 
+        cursor: pointer; 
+        font-size: 16px; 
+        padding: 4px;
+        transition: transform 0.2s;
+    `;
+    pdfBtn.onclick = () => {
+        currentOrder = orderId;
+        currentHash = row.getAttribute('data-hash');
+        exportPDF();
+    };
+    
+    container.prepend(pdfBtn);
+}
+
+        function updateStats() {
+            ['count', 'approved', 'rejected', 'pending'].forEach(id => {
+                document.getElementById(id).innerText = stats[id === 'count' ? 'total' : id];
+            });
+        }
+
+       function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    let doc = new jsPDF();
+    
+    // Header
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, 210, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.text("RevFlow Legal Audit Proof", 20, 25);
+    
+    // Content
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(12);
+    doc.text("Order ID:", 20, 60);
+    doc.setFont(undefined, 'bold');
+    doc.text(currentOrder, 50, 60);
+    
+    doc.setFont(undefined, 'normal');
+    doc.text("Timestamp:", 20, 70);
+    doc.text(new Date().toLocaleString('de-DE'), 50, 70);
+    
+    doc.text("Security Proof (SHA256):", 20, 85);
+    doc.setFont("courier", "normal");
+    doc.setFontSize(10);
+    doc.text(currentHash, 20, 95, { maxWidth: 170 });
+    
+    // Footer
+    doc.setFont("helvetica", "italic");
+    doc.text("This document serves as a legally binding timestamp for revocation.", 20, 120);
+    
+    doc.save(currentOrder + "_legal_proof.pdf");
+}
+
+        function exportCSV() {
+            let csv = ["Order ID,Customer,Timestamp,Status"];
+            document.querySelectorAll("#ledger-body tr").forEach(tr => {
+                let row = [
+                    tr.cells[0].innerText.trim(),
+                    tr.cells[1].innerText.split('\n')[0].trim(),
+                    tr.cells[2].innerText.trim(),
+                    tr.cells[3].innerText.trim()
+                ];
+                csv.push(row.join(","));
+            });
+            let blob = new Blob([csv.join("\n")], { type: 'text/csv' });
+            let a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "RevFlow_Ledger.csv";
+            a.click();
+        }
+
+        // Auto-populate 1 entry
+        window.onload = addRequest;
+
+
+        function filterLedger() {
+    const query = document.getElementById('ledger-search').value.toLowerCase();
+    const statusFilter = document.getElementById('status-filter').value;
+    const rows = document.querySelectorAll("#ledger-body tr");
+
+    rows.forEach(row => {
+        // Extract text from the specific cells
+        const orderId = row.cells[0].innerText.toLowerCase();
+        const customerName = row.cells[1].innerText.toLowerCase();
+        const statusText = row.cells[3].innerText.trim();
+
+        const matchesSearch = orderId.includes(query) || customerName.includes(query);
+        const matchesStatus = (statusFilter === "all" || statusText === statusFilter);
+
+        // Show row if it matches BOTH search and status filter
+        if (matchesSearch && matchesStatus) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+
+function saveProfile(){
+
+let company=document.getElementById("profile-company").value
+let color=document.getElementById("profile-color").value
+let token=document.getElementById("profile-token").value
+let legal=document.getElementById("profile-legal").value
+
+localStorage.setItem("rf_company",company)
+localStorage.setItem("rf_color",color)
+localStorage.setItem("rf_token",token)
+localStorage.setItem("rf_legal",legal)
+
+document.documentElement.style.setProperty("--primary",color)
+
+generateInstall()
+
+toast("Profile Saved")
+
+}
+
+function generateInstall(){
+
+let token=localStorage.getItem("rf_token")||"YOUR_API_TOKEN"
+
+let code='<script src="https://widerrufflow.onrender.com/widerrufflow.js" defer><\/script>';
+
+
+document.getElementById("installCode").value=code
+
+}
+
+function copyInstall(){
+navigator.clipboard.writeText(
+document.getElementById("installCode").value
+)
+toast("Install code copied")
+
+}
+
+window.addEventListener("load",generateInstall)
+
+
+function animateValue(id,end){
+let el=document.getElementById(id)
+let start=0
+let duration=400
+let startTime=null
+
+function step(timestamp){
+if(!startTime) startTime=timestamp
+let progress=Math.min((timestamp-startTime)/duration,1)
+el.innerText=Math.floor(progress*end)
+
+if(progress<1) requestAnimationFrame(step)
+}
+
+requestAnimationFrame(step)
+}
+
+animateValue("count",stats.total)
+animateValue("approved",stats.approved)
+animateValue("rejected",stats.rejected)
+animateValue("pending",stats.pending)
+function toast(msg){
+
+let t=document.getElementById("toast")
+t.innerText=msg
+t.style.opacity=1
+t.style.transform="translateY(0)"
+
+setTimeout(()=>{
+t.style.opacity=0
+t.style.transform="translateY(10px)"
+},2500)
+
+}
+
+    </script>
+         <script src="profile.js"></script>
+    <div id="toast"></div>
+</body>
+</html>
+
+
